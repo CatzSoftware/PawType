@@ -204,6 +204,14 @@
     .block-more .trust-wrap { margin-top: 32px; }
     .block-more .trust > div { padding-top: 24px; padding-bottom: 24px; }
   }
+  /* 筆電扣掉瀏覽器工具列常只剩 700 上下，內容最多的第四塊再收一次間距 */
+  @media (min-width: 901px) and (min-height: 640px) and (max-height: 799px) {
+    .block-more { padding: 24px 0; }
+    .block-more .sec-head { margin-bottom: 20px; }
+    .block-more .plain > div { padding: 14px 0; }
+    .block-more .trust-wrap { margin-top: 24px; }
+    .block-more .trust > div { padding-top: 18px; padding-bottom: 18px; }
+  }
   @media (min-width: 901px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }
   }
