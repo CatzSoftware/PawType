@@ -109,23 +109,23 @@
   }
 
   /* ── 段落標題 ── */
-  section { padding: 96px 0; }
+  .block { padding: 96px 0; }
+  .block-hero { padding: 0; }
   .sec-head { max-width: 40em; margin-bottom: 48px; }
   .sec-head h2 { margin: 0; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.25; font-weight: 800; text-wrap: balance; }
   .sec-head p { margin: 16px 0 0; color: var(--ink-soft); }
 
-  /* ── 三個核心體驗：左文右示範，交錯 ── */
-  .rows { display: grid; gap: 72px; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
-  .row:nth-child(even) .row-text { order: 2; }
-  .row h3 { margin: 0; font-size: 26px; line-height: 1.35; }
+  /* ── 三個核心體驗：三欄並排，示範框對齊在下方 ── */
+  .rows { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto; column-gap: 32px; row-gap: 24px; }
+  .row { display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: 24px; }
+  .row h3 { margin: 0; font-size: 24px; line-height: 1.35; text-wrap: balance; }
   .row p { margin: 12px 0 0; color: var(--ink-soft); }
   .demo {
     border: 1px solid var(--line);
     border-radius: 14px;
     background: rgba(15, 10, 28, 0.75);
     padding: 22px 24px;
-    display: grid; gap: 14px;
+    display: grid; gap: 14px; align-content: start;
   }
   .step { display: grid; grid-template-columns: 86px 1fr; gap: 12px; align-items: baseline; }
   .step dt { color: var(--muted); font-size: 14px; }
@@ -174,8 +174,11 @@
   .trust > div + div { padding-left: 28px; border-left: 1px solid var(--line); }
   .trust strong { display: block; font-size: 20px; margin-bottom: 6px; }
   .trust p { margin: 0; color: var(--ink-soft); font-size: 16px; }
+  .trust-wrap { margin-top: 48px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
   /* ── 下載 ── */
+  .block-end { padding: 0; }
   .get { text-align: center; padding: 112px 0 96px; }
   .get svg.big { width: 72px; height: 72px; }
   .get h2 { margin: 20px 0 0; font-size: clamp(30px, 4vw, 48px); line-height: 1.2; font-weight: 800; }
@@ -184,17 +187,39 @@
 
   footer { padding: 32px 0 48px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
 
+  /* ── 一屏一塊：只在夠寬也夠高的視窗吸附，手機與矮視窗照常捲動 ── */
+  @media (min-width: 901px) and (min-height: 640px) {
+    html { scroll-snap-type: y mandatory; }
+    .block {
+      min-height: 100vh; min-height: 100dvh;
+      scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 48px 0;
+    }
+    .block-hero, .block-end { padding: 0; justify-content: flex-start; }
+    .block-hero .hero { flex: 1; padding: 24px 0 64px; }
+    .block-end .get { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 0; }
+    .block-more .sec-head { margin-bottom: 28px; }
+    .block-more .plain > div { padding: 18px 0; }
+    .block-more .trust-wrap { margin-top: 32px; }
+    .block-more .trust > div { padding-top: 24px; padding-bottom: 24px; }
+  }
+  @media (min-width: 901px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+
   @media (max-width: 900px) {
-    .hero, .row, .domain { grid-template-columns: 1fr; }
+    .hero, .domain { grid-template-columns: 1fr; }
     .hero { padding: 32px 0 72px; gap: 40px; }
-    .row:nth-child(even) .row-text { order: 0; }
-    .rows { gap: 56px; }
+    .rows { grid-template-columns: 1fr; grid-template-rows: none; row-gap: 56px; }
+    .row { grid-row: auto; grid-template-rows: none; }
     .domain { padding: 28px 20px; gap: 32px; }
     .plain { grid-template-columns: 1fr; }
     .trust { grid-template-columns: 1fr; }
     .trust > div, .trust > div + div { padding: 24px 0; border-left: 0; }
     .trust > div + div { border-top: 1px solid var(--line); }
-    section { padding: 72px 0; }
+    .block { padding: 72px 0; }
+    .block-hero, .block-end { padding: 0; }
   }
   @media (max-width: 480px) {
     .wrap { padding: 0 16px; }
@@ -220,12 +245,13 @@
 </svg>
 
 <div class="wrap">
+  <main>
+  <div class="block block-hero">
   <header class="top">
     <a class="brand" href="#" aria-label="PawType 首頁"><svg aria-hidden="true"><use href="#paw"/></svg>PawType</a>
     <a class="top-link" href="#get">取得 PawType</a>
   </header>
 
-  <main>
     <div class="hero">
       <div>
         <h1>中英混打，<br><em>不用再切換</em>。</h1>
@@ -258,8 +284,9 @@
         <div class="stage-foot">英文照常出現；注音打到聲調鍵（<kbd>3</kbd> <kbd>4</kbd> <kbd>6</kbd> <kbd>7</kbd> 或空白）才轉中文。</div>
       </div>
     </div>
+  </div>
 
-    <section aria-labelledby="core">
+    <section class="block" aria-labelledby="core">
       <div class="sec-head">
         <h2 id="core">打錯、轉錯，都不用重打</h2>
         <p>打字最煩的不是打不快，是打錯之後要一個鍵一個鍵退回去。PawType 把這件事接手了。</p>
@@ -301,7 +328,7 @@
       </div>
     </section>
 
-    <section aria-labelledby="pro">
+    <section class="block" aria-labelledby="pro">
       <div class="domain">
         <div>
           <h2 id="pro">你的行業用語，排在最前面</h2>
@@ -325,7 +352,7 @@
       </div>
     </section>
 
-    <section aria-labelledby="more">
+    <section class="block block-more" aria-labelledby="more">
       <div class="sec-head">
         <h2 id="more">還有這些，讓每天的打字少一點摩擦</h2>
       </div>
@@ -337,18 +364,18 @@
         <div><dt>大量英文時暫停中文</dt><dd>Caps Lock 開著時完全不轉中文，貼程式碼、打指令都不受干擾。</dd></div>
         <div><dt>選字窗看得出常用度</dt><dd>候選字依常用程度由深到淺上色，一眼就知道哪個最常用。</dd></div>
       </dl>
-    </section>
-
-    <section aria-labelledby="trust" style="padding-top:0">
-      <h2 id="trust" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">放心用</h2>
+      <div class="trust-wrap" role="region" aria-labelledby="trust">
+      <h2 id="trust" class="sr-only">放心用</h2>
       <div class="trust">
         <div><strong>不連網</strong><p>選字、學習全在你的電腦上完成，打的字不會上傳到任何地方。</p></div>
         <div><strong>反應即時</strong><p>一般按鍵在幾十微秒內處理完，打再快也跟得上。</p></div>
         <div><strong>Windows 與 macOS</strong><p>兩個平台一樣的打法；自訂詞庫可以放進同步資料夾，換電腦也一樣順手。</p></div>
       </div>
+      </div>
     </section>
 
-    <section class="get" id="get" aria-labelledby="get-title">
+    <section class="block block-end" id="get" aria-labelledby="get-title">
+      <div class="get">
       <svg class="big" aria-hidden="true"><use href="#paw"/></svg>
       <h2 id="get-title">正式版即將推出</h2>
       <p>PawType 正在做正式版前的最後調整。完成後會在這裡提供 Windows 與 macOS 的安裝檔。</p>
@@ -356,10 +383,10 @@
         <span class="btn btn-primary" role="button" aria-disabled="true">Windows 下載</span>
         <span class="btn btn-ghost" role="button" aria-disabled="true">macOS 下載</span>
       </div>
+      </div>
+      <footer>PawType 注音輸入法</footer>
     </section>
   </main>
-
-  <footer>PawType 注音輸入法</footer>
 </div>
 
 <script>
